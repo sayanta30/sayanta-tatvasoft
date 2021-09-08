@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Home Page</title>
+
+      <!-- External datatables bootstrap css cdn -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"/>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+      <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css"/>
+      
+      <!-- External datatables bootstrap js cdn -->
+      <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+      <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+      <script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+      
+
+      <style>
+         body{
+            background-color: #f8f8f8;
+         }
+         table{
+            background-color: #fff;
+         }
+      </style>
+   </head>
+   <body class="bg-light">
+      <nav class="navbar navbar-light bg-dark">
+         <span class="navbar-brand mb-0 h1 text-light">Event Dashboard</span>
+      </nav>
+      <div class="container-fluid mt-2">
+         <div class="row">
+            <div class="col-sm-12">
+               <center><h2 class="mt-3">Event Table</h2></center>
+               <button id="createEventButton" type="button" class="btn btn-outline-primary">Create Event</button>
+               <hr>
+               <table id="eventTable" class="table table-striped table-bordered table-hover" style="width: 100%;">
+                  <caption>List of all events with their starting date.</caption>
+                  <thead class="thead-dark">
+                     <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Start Date</th>
+                        <th>Actions</th>
+                     </tr>
+                  </thead>
+               </table>
+            </div>
+         </div>
+      </div>
+
+      <div id="newEventModal" class="modal fade" tabindex="-1" role="dialog">
+         <div class="modal-dialog" role="document">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title">Create New Event</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                     <span aria-hidden="true">&times;</span>
+                  </button>
+               </div>
+               <div class="modal-body">
+                  <form id="newEventForm">
+                     <div class="form-group">
+                        <label for="">Event Title</label>
+                        <input id="newEventTitle" name="newEventTitle" type="text" class="form-control" placeholder="Enter the Event Title here....">
+                     </div>
+                     <div class="form-group">
+                        <label for="">Event Start Date</label>
+                        <input id="newEventStartDate" name="newEventStartDate" type="date" class="form-control">
+                     </div>
+                     <div class="form-group">
+                        <label for="">Recurrence</label>
+                        <div class="row">
+                           <div class="col">
+                              <input id="newEventRecurrence" name="newEventRecurrence" type="number" class="form-control"> 
+                           </div>
+                           <div class="col">
+                              <select name="newEventRecurrenceType" id="newEventRecurrenceType" class="form-control">
+                                 <option value="Day">Day</option>
+                                 <option value="Week">Week</option>
+                                 <option value="Month">Month</option>
+                                 <option value="Year">Year</option>
+                              </select>
+                           </div>
+                        </div>
+                        <div id="visibleOnWeek" class="row">
+                           <div class="col">
+                              <div class="form-check">
+                                 <input class="form-check-input" name="dayCheckbox" type="checkbox" id="inlineCheckboxSunday" value="Sunday">
+                                 <label class="form-check-label" for="inlineCheckboxSunday">Sunday</label>
+                              </div>
+                              <div class="form-check">
+                                 <input class="form-check-input" name="dayCheckbox" type="checkbox" id="inlineCheckboxMonday" value="Monday">
+                                 <label class="form-check-label" for="inlineCheckboxMonday">Monday</label>
+                              </div>
+                              <div class="form-check">
+                                 <input class="form-check-input" name="dayCheckbox" type="checkbox" id="inlineCheckboxTuesday" value="Tuesday">
+                                 <label class="form-check-label" for="inlineCheckboxTuesday">Tuesday</label>
+                              </div>
+                              <div class="form-check">
+                                 <input class="form-check-input" name="dayCheckbox" type="checkbox" id="inlineCheckboxWednesday" value="Wednesday">
+                                 <label class="form-check-label" for="inlineCheckboxWednesday">Wednesday</label>
+                              </div>
+                              <div class="form-check">
+                                 <input class="form-check-input" name="dayCheckbox" type="checkbox" id="inlineCheckboxThursday" value="Thursday">
+                                 <label class="form-check-label" for="inlineCheckboxThursday">Thursday</label>
+                              </div>
+                              <div class="form-check">
+                                 <input class="form-check-input" name="dayCheckbox" type="checkbox" id="inlineCheckboxFriday" value="Friday">
+                                 <label class="form-check-label" for="inlineCheckboxFriday">Friday</label>
+                              </div>
+                              <div class="form-check">
+                                 <input class="form-check-input" name="dayCheckbox" type="checkbox" id="inlineCheckboxSaturday" value="Saturday">
+                                 <label class="form-check-label" for="inlineCheckboxSaturday">Saturday</label>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <label for="">Ends</label>
+                        <div class="form-check">
+                           <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="dateSelected">
+                           On<input id="newEventEndDate" name="newEventEndDate" type="date" class="form-control form-check-label">
+                        </div>
+                        <div class="form-check">
+                           <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="ocurrenceSelected">
+                           After <input id="newEventEndOccurence" name="newEventEndOccurence" type="number" class="form-control position-static form-check-label"> Ocurrence
+                        </div>
+                     </div>
+                     <input id="newEventModalSubmit" type="submit" class="btn btn-secondary" value="Done">
+                  </form>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <div id="eventShowModal" class="modal fade" tabindex="-1" role="dialog">
+         <div class="modal-dialog" role="document">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 id="eventTitleModal" class="modal-title"></h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                     <span aria-hidden="true">&times;</span>
+                  </button>
+               </div>
+               <div class="modal-body">
+                  <table id="singleEventTable" class="table table-striped table-bordered table-hover" style="width: 100%;">
+                     <caption>List of event details.</caption>
+                     <thead class="thead-dark">
+                        <tr>
+                           <th>Days</th>
+                           <th>Event Dates</th>
+                        </tr>
+                     </thead>
+                     <tbody id="singleEventTableTbody"></tbody>
+                  </table>
+                  <h5 id="eventCountModal"></h5>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Done</button>
+               </div>
+            </div>
+         </div>
+      </div>
+
+
+      <!-- Sripts starts here -->
+      <script>
+         // Calling the api to get all the products
+         function fetchEvents(){
+            $.ajax({
+               url: './api/getAllEvents.php',
+               type: 'POST',
+               success: function(){
+                  populateEventTable();
+               }                  
+            });
+         }
+
+         // Populate All Products from the json file in the product table
+         function populateEventTable(){
+            $('#eventTable').DataTable({
+               "destroy": true,
+               "pageLength": 10,
+               "lengthMenu": [5,10,15,20],
+               "responsive": true,
+               "ajax": {
+                  "url": './data/data.json'
+               },
+               "columns": [
+                  { "data": "sl" },
+                  { "data": "title" },
+                  { "data": "sDate" },
+                  { "data": "actions" },
+               ]
+            });   
+         }
+
+         $(document).ready(function(){
+            // Calling for getting the product for first time
+            fetchEvents();
+
+            $(document).on('click','#createEventButton',function(){
+               $("#visibleOnWeek").hide()
+               $("#newEventModal").modal({backdrop: 'static', keyboard: false});
+            });
+
+            $('#newEventRecurrenceType').on('change',function(){
+               if($(this).val() == 'Week'){
+                  $("#visibleOnWeek").show()
+               }
+               else{
+                  $("#visibleOnWeek").hide()
+               }
+            })
+            
+            $("#newEventModalSubmit").click(function(e){
+               e.preventDefault();
+               flag = 1;
+               newEventTitle = $("#newEventTitle").val();
+               newEventStartDate = $('#newEventStartDate').val();
+               newEventRecurrence = $('#newEventRecurrence').val();
+               newEventEndOccurence = $('#newEventEndOccurence').val();
+               newEventEndDate = $('#newEventEndDate').val();
+
+               
+               var formData = {
+                  items: [
+                     {
+                        newEventTitle: newEventTitle,
+                        newEventStartDate: newEventStartDate,
+                        recurrenceNumber: newEventRecurrence,
+                        newEventRecurrenceType: $('#newEventRecurrenceType').val(),
+                        newEventEndDate: newEventEndDate,
+                        newEventEndOccurence: newEventEndOccurence
+                     }
+                  ]
+               }
+
+               if($('input[name=inlineRadioOptions]:checked').val() == 'dateSelected'){
+                  if(newEventEndDate.length == ''){
+                     $("#newEventEndDate").focus();
+                     flag = 0;
+                  }
+                  else{
+                     formData.items.push({endDate: newEventEndDate})
+                  }
+               }
+
+               if($('input[name=inlineRadioOptions]:checked').val() == 'ocurrenceSelected'){
+                  if(newEventEndOccurence.length == '' || newEventEndOccurence == 0){
+                     $("#newEventEndOccurence").focus();
+                     flag = 0;
+                  }
+                  else{
+                     formData.items.push({endNoOfOcurrence: newEventEndOccurence})
+                  }
+               }
+
+
+               if($('#newEventRecurrenceType').val() == 'Week'){
+                  if($('input[name="dayCheckbox"]:checked').length < 1){
+                     $('input[name="dayCheckbox"]').focus();
+                     flag = 0;
+                  }
+               }
+
+               
+               if(newEventRecurrence.length == '' || newEventRecurrence == 0){
+                  $("#newEventRecurrence").focus();
+                  flag = 0;
+               }
+
+               if(newEventStartDate.length == ''){
+                  $("#newEventStartDate").focus();
+                  flag = 0;
+               }
+
+               if(newEventTitle.length == ''){
+                  $("#newEventTitle").focus();
+                  flag = 0;
+               }
+               
+
+               console.log(formData)
+
+               daysOfWeek = null;
+               dayNameList = [];
+               if($('#newEventRecurrenceType').val() == 'Week'){
+                  $('input[name="dayCheckbox"]:checked').each(function () {
+                     var sThisVal = (this.checked ? $(this).val() : "");
+                     dayNameList.push(sThisVal)
+                  });
+                  
+               }
+
+               formData.items.push({dayNames: dayNameList})
+
+               if(flag){
+                  $.ajax({
+                     url: './api/newEvent.php',
+                     type: 'POST',
+                     data: formData,
+                     success: function(response){
+                        $("#newEventModal").modal('hide');
+                        Swal.fire({
+                           title: response == true ? 'Event created' : 'No event created',
+                           confirmButtonText: response == true ? 'Ok' : 'Try Again',
+                        });
+                        fetchEvents();
+                     }
+                  })
+               }
+
+            })
+
+            // View or Delete events
+            $(document).on('click','.viewEvent',function(e){
+               e.preventDefault();
+               
+               // Getting the product id
+               let eventId = $(this).attr('id')
+               $.ajax({
+                  url: "./api/getSingleEvent.php",
+                  type: "POST",
+                  data: {
+                     id: eventId
+                  },
+                  success: function(getSingleEventResponse){
+                     let singleEventResponse = JSON.parse(getSingleEventResponse);
+                     if(singleEventResponse.status == true){
+                        $("#eventTitleModal").text('Event Title: '+singleEventResponse.title)
+                        $("#eventCountModal").text('Total Recurrence Event: '+singleEventResponse.count)
+                        let allRows = ''
+                        for ( i in singleEventResponse.event_dates){
+                           allRows += '<tr><td>'+singleEventResponse.event_dates[i][0]+'</td><td>'+singleEventResponse.event_dates[i][1]+'</td></tr>'
+                        }
+                        $("#singleEventTableTbody").html('').append(allRows)
+                     }
+                     else{
+                        Swal.fire({
+                           title: 'No events found.',
+                           confirmButtonText: 'Try Again',
+                        });
+                     }
+                     $("#eventShowModal").modal({backdrop: 'static', keyboard: false});
+                  }
+               });
+            });
+
+            $(document).on('click','.deleteEvent',function(e){
+               e.preventDefault();
+               
+               // Getting the product id
+               let eventId = $(this).attr('id')
+               $.ajax({
+                  url: "./api/getSingleEvent.php",
+                  type: "POST",
+                  data: {
+                     id: eventId
+                  },
+                  success: function(getSingleEventResponse){
+                     let singleEventResponse = JSON.parse(getSingleEventResponse);
+                     if(singleEventResponse.status == true){
+                        Swal.fire({
+                           title: 'Are you sure you want to delete??',
+                           showCancelButton: true,
+                           showConfirmButton: true,
+                        }).then((result) => {
+                           if (result.isConfirmed){
+                              $.ajax({
+                                 url: './api/deleteEvent.php',
+                                 type: 'POST',
+                                 data: {
+                                    id: eventId
+                                 },
+                                 success: function(response){
+                                    response = JSON.parse(response)
+                                    if(response.status == true){
+                                       fetchEvents();
+                                       Swal.fire(response.text)
+                                    }
+                                 }
+                              });
+                           }
+                           else if (result.isDenied){
+                              Swal.fire('Nothing to do.')
+                           }
+                        });
+                     }
+                     else{
+                        Swal.fire({
+                           title: 'No events found.',
+                           confirmButtonText: 'Try Again',
+                        });
+                     }
+                  }
+               });
+            });
+
+         });
+      </script>
+   </body>
+</html>
