@@ -31,15 +31,26 @@ if($_POST){
          }
       }
       elseif($recurrenceType == 'Week'){
-         $newDate = date('Y-m-d', strtotime(  $startDate . "+".$recurrenceNumber." week"));
+         $newDate = date('Y-m-d', strtotime(  $startDate . "-".date('w', strtotime($startDate)-1)."days"));
+         $count = 0;
          for($i = 0; $i < $endNoOfOcurrence-1; $i++){
-            if(in_array(date('l', strtotime($newDate)), $formData[2]['dayNames'])){
-               $query = $con->prepare("INSERT INTO event_details_log(event_id, event_date) VALUES ('$eid','$newDate')");
-               $query->execute();
-               
-               $data = true;
+            $startingDate = date('Y-m-d', strtotime(  $newDate . "+".($recurrenceNumber-1)." week")); 
+            for($daysOfWeek = 1; $daysOfWeek <= 7; $daysOfWeek++){
+               $newDate = date('Y-m-d', strtotime($startingDate . "+".$daysOfWeek." days"));
+               if(in_array(date('l', strtotime($newDate)), $formData[2]['dayNames'])){
+                  if($count < $endNoOfOcurrence-1){
+                     $count++;
+                     $query = $con->prepare("INSERT INTO event_details_log(event_id, event_date) VALUES ('$eid','$newDate')");
+                     $query->execute();
+                     
+                     $data = true;
+                  }
+                  else{
+                     break;
+                  }
+               }
             }
-            $newDate = date('Y-m-d', strtotime(  $newDate . "+".$recurrenceNumber." week"));
+            $newDate = date('Y-m-d', strtotime(  $startingDate . "+".$recurrenceNumber." week"));
          }
       }
       elseif($recurrenceType == 'Month'){
@@ -74,14 +85,24 @@ if($_POST){
          }
       }
       elseif($recurrenceType == 'Week'){
-         $newDate = date('Y-m-d', strtotime(  $startDate . "+".$recurrenceNumber." week"));
+         $newDate = date('Y-m-d', strtotime(  $startDate . "-".date('w', strtotime($startDate)-1)."days"));
          while(strtotime($newDate) < strtotime($endDate)){
-            if(in_array(date('l', strtotime($newDate)), $formData[2]['dayNames'])){
-               $query = $con->prepare("INSERT INTO event_details_log(event_id, event_date) VALUES ('$eid','$newDate')");
-               $query->execute();
-               $data = true;
+            $startingDate = date('Y-m-d', strtotime(  $newDate . "+".($recurrenceNumber-1)." week")); 
+            for($daysOfWeek = 1; $daysOfWeek <= 7; $daysOfWeek++){
+               $newDate = date('Y-m-d', strtotime($startingDate . "+".$daysOfWeek." days"));
+               if(in_array(date('l', strtotime($newDate)), $formData[2]['dayNames'])){
+                  if(strtotime($newDate) < strtotime($endDate)){
+                     $query = $con->prepare("INSERT INTO event_details_log(event_id, event_date) VALUES ('$eid','$newDate')");
+                     $query->execute();
+                     
+                     $data = true;
+                  }
+                  else{
+                     break;
+                  }
+               }
             }
-            $newDate = date('Y-m-d', strtotime(  $newDate . "+".$recurrenceNumber." week"));
+            $newDate = date('Y-m-d', strtotime(  $startingDate . "+".$recurrenceNumber." week"));
          }
       }
       elseif($recurrenceType == 'Month'){
